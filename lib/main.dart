@@ -10,10 +10,10 @@ class AsteroidsScreen extends StatefulWidget {
   const AsteroidsScreen({super.key});
 
   @override
-  AsteroidsScreenState createState() => AsteroidsScreenState();
+  _AsteroidsScreenState createState() => _AsteroidsScreenState();
 }
 
-class AsteroidsScreenState extends State<AsteroidsScreen> {
+class _AsteroidsScreenState extends State<AsteroidsScreen> {
   late Future<List<Asteroid>> _futureAsteroids;
 
   @override
@@ -24,31 +24,39 @@ class AsteroidsScreenState extends State<AsteroidsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Asteroides"),
-      ),
-      body: FutureBuilder<List<Asteroid>>(
-        future: _futureAsteroids,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          } else {
-            return ListView(
-              children: snapshot.data!.map((asteroid) {
-                return Card(
-                  child: ListTile(
-                    title: Text(asteroid.name),
-                    subtitle: Text(
-                        "Data de aproximação: ${asteroid.closeApproachDate} | Distância da Terra: ${asteroid.missDistance} | Tamanho do asteroide: ${asteroid.diameter}"),
-                  ),
+    return MaterialApp(
+      // Define o idioma do app
+      locale: Locale("pt", "BR"),
+      // Define o widget MaterialLocalizations como ancestral do Scaffold
+      home: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Asteroides"),
+          ),
+          body: FutureBuilder<List<Asteroid>>(
+            future: _futureAsteroids,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text(snapshot.error.toString()));
+              } else {
+                return ListView(
+                  children: snapshot.data!.map((asteroid) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(asteroid.name),
+                        subtitle: Text(
+                            "Data de aproximação: ${asteroid.closeApproachDate} | Distância da Terra: ${asteroid.missDistance} | Tamanho do asteroide: ${asteroid.diameter}"),
+                      ),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
-            );
-          }
-        },
+              }
+            },
+          ),
+        ),
       ),
     );
   }
